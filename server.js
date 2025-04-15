@@ -2,10 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const app = express();
-const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = "secret"
+
+const User = require('./models/User');
+const Field = require('./models/Field');
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -13,31 +17,31 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json()); 
 app.use(cookieParser());
 
+const connectDB = require('./db');
+connectDB();
+
 const WEATHER_API_KEY = '24e24b9b1164a4eb7911fd436551dd81'; 
 
-app.get('/', (req, res) => {
+app.get('/', isLoggedIn, (req, res) => {
   res.render('weather', { rainfall: null, location: null });
 });
 
-// Handle the Fetch request for rainfall data
-app.post('/get-rainfall', async (req, res) => {
+app.post('/get-rainfall', isLoggedIn, async (req, res) => {
   const { latitude, longitude } = req.body;
   const url = `https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=PRECTOTCORR&community=AG&longitude=${longitude}&latitude=${latitude}&format=JSON`;
 
   try {
     const response = await axios.get(url);
-    console.log('API Response:', response.data);  // Log the full response
+    console.log('API Response:', response.data); 
 
     const monthlyData = response.data?.properties?.parameter?.PRECTOTCORR;
     if (!monthlyData) throw new Error('Missing PRECTOTCORR data');
 
-    // Number of days in each month (assuming a common year)
     const daysInMonth = {
       JAN: 31, FEB: 28, MAR: 31, APR: 30, MAY: 31, JUN: 30,
       JUL: 31, AUG: 31, SEP: 30, OCT: 31, NOV: 30, DEC: 31
     };
 
-    // Calculate total annual rainfall in mm
     let totalRainfall = 0;
     for (const month in monthlyData) {
       if (month !== 'ANN') {
@@ -48,7 +52,7 @@ app.post('/get-rainfall', async (req, res) => {
     }
 
     res.json({
-      rainfall: totalRainfall.toFixed(2),  // Total annual rainfall in mm
+      rainfall: totalRainfall.toFixed(2),  
       location: { lat: parseFloat(latitude).toFixed(4), lon: parseFloat(longitude).toFixed(4) },
     });
   } catch (error) {
@@ -62,7 +66,7 @@ app.post('/get-rainfall', async (req, res) => {
 
 
 
-app.post('/get-weather', async (req, res) => {
+app.post('/get-weather', isLoggedIn, async (req, res) => {
   const { latitude, longitude } = req.body;
   const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=current,minutely,hourly&units=metric&appid=${WEATHER_API_KEY}`;
 
@@ -80,9 +84,9 @@ app.post('/get-weather', async (req, res) => {
 
     res.json({
       tomorrow: tomorrow,
-      nextWeek: nextWeek,
-      next15Days: next15Days,
-      warnings: warnings,
+      // nextWeek: nextWeek,
+      // next15Days: next15Days,
+      // warnings: warnings,
     });
   } catch (error) {
     console.error('Error fetching weather data:', error.message);
@@ -128,7 +132,7 @@ app.post('/createUser', async (req, res) => {
 
     await newUser.save();
 
-    res.json({ message: 'User created successfully' });
+    res.render('login');
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong' });
   }
@@ -151,7 +155,7 @@ app.post('/login', async (req, res) => {
       maxAge: 86400000
     });
 
-    res.json({ message: 'Login successful' });
+    res.render('index');
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -220,11 +224,7 @@ app.get('/addField', isLoggedIn, async (req, res) => {
   res.render('addfield');
 })
 
-
-
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-mongoose.connect('mongodb://127.0.0.1:27017/farmDB');
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
