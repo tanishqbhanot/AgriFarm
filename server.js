@@ -10,10 +10,10 @@ const JWT_SECRET = "secret"
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
 app.use(cookieParser());
 
-const WEATHER_API_KEY = '24e24b9b1164a4eb7911fd436551dd81'; 
+const WEATHER_API_KEY = '24e24b9b1164a4eb7911fd436551dd81';
 
 app.get('/', (req, res) => {
   res.render('weather', { rainfall: null, location: null });
@@ -228,3 +228,16 @@ mongoose.connect('mongodb://127.0.0.1:27017/farmDB');
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+
+
+// predict
+
+axios.post('http://localhost:5000/jsonrec', jsonData)
+  .then(response => {
+    console.log('Response from Flask:', response.data);
+  })
+  .catch(error => {
+    console.error('Error sending JSON:', error.message);
+  });
+
+
