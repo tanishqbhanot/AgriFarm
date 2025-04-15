@@ -17,14 +17,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-<<<<<<< HEAD
 const connectDB = require('./db');
 connectDB();
 
 const WEATHER_API_KEY = '24e24b9b1164a4eb7911fd436551dd81'; 
-=======
-const WEATHER_API_KEY = '24e24b9b1164a4eb7911fd436551dd81';
->>>>>>> 5ce6fc2d649e5d985b84f3fbc332bb4dd74f5a8b
 
 app.get('/', isLoggedIn, (req, res) => {
   res.render('weather', { rainfall: null, location: null });
@@ -243,5 +239,7 @@ axios.post('http://localhost:5000/jsonrec', jsonData)
   .catch(error => {
     console.error('Error sending JSON:', error.message);
   });
+
+
 
 
