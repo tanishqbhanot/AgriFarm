@@ -17,14 +17,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-<<<<<<< HEAD
 const connectDB = require('./db');
 connectDB();
 
-const WEATHER_API_KEY = '24e24b9b1164a4eb7911fd436551dd81'; 
-=======
 const WEATHER_API_KEY = '24e24b9b1164a4eb7911fd436551dd81';
->>>>>>> 5ce6fc2d649e5d985b84f3fbc332bb4dd74f5a8b
 
 app.get('/', isLoggedIn, (req, res) => {
   res.render('weather', { rainfall: null, location: null });
@@ -36,7 +32,7 @@ app.post('/get-rainfall', isLoggedIn, async (req, res) => {
 
   try {
     const response = await axios.get(url);
-    console.log('API Response:', response.data); 
+    console.log('API Response:', response.data);
 
     const monthlyData = response.data?.properties?.parameter?.PRECTOTCORR;
     if (!monthlyData) throw new Error('Missing PRECTOTCORR data');
@@ -56,7 +52,7 @@ app.post('/get-rainfall', isLoggedIn, async (req, res) => {
     }
 
     res.json({
-      rainfall: totalRainfall.toFixed(2),  
+      rainfall: totalRainfall.toFixed(2),
       location: { lat: parseFloat(latitude).toFixed(4), lon: parseFloat(longitude).toFixed(4) },
     });
   } catch (error) {
@@ -245,3 +241,14 @@ axios.post('http://localhost:5000/jsonrec', jsonData)
   });
 
 
+
+// input 
+
+const jsonedData = {
+  N: 90,
+  P: 42,
+  K: 43,
+  temperature: 25,
+  humidity: 80,
+  rainfall: 200
+};
