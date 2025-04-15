@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Field</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2e8b57; /* Earthy green color */
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2e8b57; /* Earthy green color */
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #267d46;
+        }
+        .location-btn {
+            display: inline-block;
+            background-color: #ffcc00;
+            padding: 8px 16px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .location-btn:hover {
+            background-color: #e6b800;
+        }
+        .optional {
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Add a New Field</h2>
+        <form action="/addField" method="POST">
+            <div class="form-group">
+                <label for="latitude">Latitude:</label>
+                <input type="text" id="latitude" name="latitude" placeholder="Enter latitude" required>
+                <button type="button" class="location-btn" onclick="getLocation()">Get Location</button>
+            </div>
+
+            <div class="form-group">
+                <label for="longitude">Longitude:</label>
+                <input type="text" id="longitude" name="longitude" placeholder="Enter longitude" required>
+            </div>
+
+            <div class="form-group">
+                <label for="length">Field Length (meters):</label>
+                <input type="number" id="length" name="length" placeholder="Enter field length" required>
+            </div>
+
+            <div class="form-group">
+                <label for="breadth">Field Breadth (meters):</label>
+                <input type="number" id="breadth" name="breadth" placeholder="Enter field breadth" required>
+            </div>
+
+            <div class="form-group">
+                <label for="crop">Crop Growing:</label>
+                <input type="text" id="crop" name="crop" placeholder="Enter crop name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastNPK">Last NPK Application:</label>
+                <input type="date" id="lastNPK" name="lastNPK">
+            </div>
+
+            <div class="form-group">
+                <label for="lastUrea">Last Urea Application:</label>
+                <input type="date" id="lastUrea" name="lastUrea">
+            </div>
+
+            <div class="form-group">
+                <label for="lastLime">Last Lime Application:</label>
+                <input type="date" id="lastLime" name="lastLime">
+            </div>
+
+            <div class="form-group">
+                <label for="irrigationFrequency">Irrigation Frequency (days):</label>
+                <input type="number" id="irrigationFrequency" name="irrigationFrequency" placeholder="Enter irrigation frequency" required>
+            </div>
+
+            <div class="form-group">
+                <label for="irrigationType">Irrigation Type:</label>
+                <select id="irrigationType" name="irrigationType">
+                    <option value="drip">Drip</option>
+                    <option value="sprinkler">Sprinkler</option>
+                    <option value="flood">Flood</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="soilType">Soil Type:</label>
+                <input type="text" id="soilType" name="soilType" placeholder="Enter soil type">
+            </div>
+
+            <div class="form-group">
+                <label for="moistureLevel">Soil Moisture Level (%):</label>
+                <input type="number" id="moistureLevel" name="moistureLevel" placeholder="Enter soil moisture level">
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Additional Notes:</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Enter any additional information about the field"></textarea>
+            </div>
+
+            <button type="submit">Add Field</button>
+        </form>
+        <p class="optional">* You can either manually enter the latitude/longitude or use the 'Get Location' button to automatically fetch your current location.</p>
+    </div>
+
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    document.getElementById("latitude").value = position.coords.latitude;
+                    document.getElementById("longitude").value = position.coords.longitude;
+                }, function(error) {
+                    alert("Geolocation error: " + error.message);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+</body>
+</html>
